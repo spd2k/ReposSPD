@@ -25,9 +25,3 @@ def permute(xs, low=0):
                 yield p
             xs[low], xs[i] = xs[i], xs[low]
 
-
-list_of_tasks, numb_machines, numb_tasks = read_data_from_file("test.txt");
-ind = fill_list_of_index(list_of_tasks)
-makespan = cmax(numb_machines, ind, list_of_tasks)
-print(makespan)
-
