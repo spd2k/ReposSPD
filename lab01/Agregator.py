@@ -51,7 +51,7 @@ class Agregator():
 					yield p
 				_list_of_tasks[low], _list_of_tasks[i] = _list_of_tasks[i], _list_of_tasks[low]
 
-	def find_best_order(self):
+	def find_best_order(self, get_order=False):
 		min_cmax = self.__getCMax(self.numb_machines, self.list_of_index, self.list_of_tasks)
 		best_order = []
 		for i in self.__permute(self.list_of_index):
@@ -59,18 +59,22 @@ class Agregator():
 			if permuted_tasks_Cmax < min_cmax:
 				min_cmax = permuted_tasks_Cmax
 				best_order = i
-		return min_cmax, best_order
+			return min_cmax, best_order
 
 	def NEH(self):
-		#sortowanie nierosnące
+		#decreasingly sort
 		priorities = lambda task: task.priority
 		tasks_to_sort = self.list_of_tasks
 		tasks_to_sort.sort(reverse=True, key=priorities)
 		print([a.priority for a in tasks_to_sort])
 
+		#take the biggest prio
+		biggest_Task = tasks_to_sort[0]
+		#permute rest of tasks and get Cmax for all possibilites, take the best
+		for i in self.__permute(tasks_to_sort[1:]):
+			print([biggest_Task] + i)
 
-
-
+		# TODO rebuild bestCmax function to use with args not selfs.
 
 if __name__ == "__main__":
 	foo = Agregator("test.txt")
