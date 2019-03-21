@@ -61,6 +61,18 @@ class Agregator():
 				best_order = i
 		return min_cmax, best_order
 
+	def NEH(self):
+		#sortowanie nierosnące
+		priorities = lambda task: task.priority
+		tasks_to_sort = self.list_of_tasks
+		tasks_to_sort.sort(reverse=True, key=priorities)
+		print([a.priority for a in tasks_to_sort])
+
+
+
+
+
 if __name__ == "__main__":
 	foo = Agregator("test.txt")
 	print(foo.find_best_order())
+	foo.NEH()
