@@ -27,13 +27,13 @@ class Agregator():
 					self.list_of_tasks.append(Task(i - 1, dt))
 				i += 1
 
-	def __getCMax(self, numb_machines, list_of_index, list_of_tasks):
+	def __getCMax(self, list_of_index, list_of_tasks):
 		MaxSpan = []
-		for i in range(numb_machines):
+		for i in range(self.numb_machines):
 			MaxSpan.append(0)
 		for j in list_of_index:
 			MaxSpan[0] += list_of_tasks[j].time[0]
-			for k in range(1, numb_machines):
+			for k in range(1, self.numb_machines):
 				if MaxSpan[k] < MaxSpan[k - 1]:
 					MaxSpan[k] = MaxSpan[k - 1]
 				MaxSpan[k] += list_of_tasks[j].time[k]
