@@ -39,19 +39,19 @@ class Agregator():
 				MaxSpan[k] += list_of_tasks[j].time[k]
 		return max(MaxSpan)
 
-	def __permute(self, _list_of_tasks, low=0):
-		if low + 1 >= len(_list_of_tasks):
-			yield _list_of_tasks
+	def __permute(self, task_order, low=0):
+		if low + 1 >= len(task_order):
+			yield task_order
 		else:
-			for p in self.__permute(_list_of_tasks, low + 1):
+			for p in self.__permute(task_order, low + 1):
 				yield p
-			for i in range(low + 1, len(_list_of_tasks)):
-				_list_of_tasks[low], _list_of_tasks[i] = _list_of_tasks[i], _list_of_tasks[low]
-				for p in self.__permute(_list_of_tasks, low + 1):
+			for i in range(low + 1, len(task_order)):
+				task_order[low], task_order[i] = task_order[i], task_order[low]
+				for p in self.__permute(task_order, low + 1):
 					yield p
-				_list_of_tasks[low], _list_of_tasks[i] = _list_of_tasks[i], _list_of_tasks[low]
+				task_order[low], task_order[i] = task_order[i], task_order[low]
 
-	def find_best_order(self, get_order=False):
+	def permute_for_best_order(self):
 		min_cmax = self.__getCMax(self.list_of_index, self.list_of_tasks)
 		best_order = []
 		for permuted_order_of_tasks in self.__permute(self.list_of_index):
@@ -70,13 +70,10 @@ class Agregator():
 
 		#take the biggest prio
 		biggest_Task = tasks_to_sort[0]
-		#permute rest of tasks and get Cmax for all possibilites, take the best
-		for i in self.__permute(tasks_to_sort[1:]):
-			print([biggest_Task] + i)
 
-		# TODO rebuild bestCmax function to use with args not selfs.
+
 
 if __name__ == "__main__":
 	foo = Agregator("test.txt")
-	print(foo.find_best_order())
+	print(foo.permute_for_best_order())
 	foo.NEH()
