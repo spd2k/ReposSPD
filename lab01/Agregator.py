@@ -52,13 +52,13 @@ class Agregator():
 				_list_of_tasks[low], _list_of_tasks[i] = _list_of_tasks[i], _list_of_tasks[low]
 
 	def find_best_order(self, get_order=False):
-		min_cmax = self.__getCMax(self.numb_machines, self.list_of_index, self.list_of_tasks)
+		min_cmax = self.__getCMax(self.list_of_index, self.list_of_tasks)
 		best_order = []
-		for i in self.__permute(self.list_of_index):
-			permuted_tasks_Cmax = self.__getCMax(self.numb_machines, i, self.list_of_tasks)
+		for permuted_order_of_tasks in self.__permute(self.list_of_index):
+			permuted_tasks_Cmax = self.__getCMax(permuted_order_of_tasks, self.list_of_tasks)
 			if permuted_tasks_Cmax < min_cmax:
 				min_cmax = permuted_tasks_Cmax
-				best_order = i
+				best_order = permuted_order_of_tasks
 			return min_cmax, best_order
 
 	def NEH(self):
