@@ -1,4 +1,4 @@
-from .Task import Task
+from Task import Task
 import re
 
 class Agregator():
