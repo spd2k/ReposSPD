@@ -75,7 +75,7 @@ class Agregator():
 			updated_list.insert(place, new_task)
 			task_list.append(updated_list)
 		cemax = lambda lista: self.__getCMax(list(range(len(lista))), lista)
-		task_list.sort(reverse=True, key=cemax)
+		task_list.sort(key=cemax)
 		return task_list[0]
 
 	def NEH(self):
