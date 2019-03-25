@@ -68,21 +68,16 @@ class Agregator():
 		return min_cmax, best_order
 
 	def __NEH_best_order(self, current_list, new_task):
-		print(self.__get_task_order(current_list))
-		print([i.nr for i in current_list])
-
-		best_Cmax=self.__getCMax(self.list_of_index, current_list)
-
+		best_Cmax=self.__getCMax(list(range(len(current_list))), current_list)
 		best_task_list=[]
 		for place in range(len(current_list)+1):
 			updated_list = current_list[:]
 			updated_list.insert(place, new_task)
-			new_list_Cmax = self.__getCMax(self.__get_task_order(updated_list), updated_list)
+			new_list_Cmax = self.__getCMax(list(range(len(updated_list))), updated_list)
 			if new_list_Cmax < best_Cmax:
 				best_Cmax = new_list_Cmax
 				best_task_list = updated_list
 		return best_task_list
-
 
 	def NEH(self):
 		#decreasingly sort
@@ -91,12 +86,12 @@ class Agregator():
 		tasks_to_sort.sort(reverse=True, key=priorities)
 		biggest_Task = tasks_to_sort[0]
 		NEH_list=[biggest_Task, ]
-		for task in tasks_to_sort:
+		for task in tasks_to_sort[1:]:
 			NEH_list=self.__NEH_best_order(NEH_list, task)
 		return NEH_list
 
 
 if __name__ == "__main__":
 	foo = Agregator("test.txt")
-#	print(foo.permute_for_best_order())
-	foo.NEH()
+	#print(foo.permute_for_best_order())
+	print(foo.NEH())
