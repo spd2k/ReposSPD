@@ -1,0 +1,5 @@
+.pytest_cache
+.idea/
+lab01/Agregator_dir/__pycache__/
+lab01/tests/CMAX/__pycache__/
+lab01/__pycache__/.
