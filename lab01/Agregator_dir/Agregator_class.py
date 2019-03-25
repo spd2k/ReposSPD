@@ -58,6 +58,35 @@ class Agregator():
 					yield p
 				task_order[low], task_order[i] = task_order[i], task_order[low]
 
+	def johnson(self, list_of_tasks, numb_machines):
+		first_half = []
+		second_half = []
+		if numb_machines == 2:
+			list_not_empty = True
+			while list_not_empty:
+				min_m1 = 0
+				min_m2 = 0
+				for task_nr in range(len(list_of_tasks)):
+					if list_of_tasks[task_nr].time[0] < list_of_tasks[min_m1].time[0]:
+						min_m1 = task_nr
+					if list_of_tasks[task_nr].time[1] < list_of_tasks[min_m2].time[1]:
+						min_m2 = task_nr
+				if list_of_tasks[min_m1].time[0] < list_of_tasks[min_m2].time[1]:
+					first_half.append(list_of_tasks[min_m1].nr)
+					del list_of_tasks[min_m1]
+				elif list_of_tasks[min_m1].time[0] == list_of_tasks[min_m2].time[1]:
+					first_half.append(list_of_tasks[min_m1].nr)
+					# second_half.insert(0, list_of_tasks[min_m2])
+					del list_of_tasks[min_m1]
+				elif list_of_tasks[min_m1].time[0] > list_of_tasks[min_m2].time[1]:
+					second_half.insert(0, list_of_tasks[min_m2].nr)
+					del list_of_tasks[min_m2]
+				if len(list_of_tasks) == 0:
+					list_not_empty = False
+
+		final_list = first_half + second_half
+		return final_list
+
 	def permute_for_best_order(self):
 		min_cmax = self.__getCMax(self.list_of_index, self.list_of_tasks)
 		best_order = []
@@ -89,6 +118,8 @@ class Agregator():
 			NEH_list = self.__NEH_best_order(NEH_list, task)
 		return self.__getCMax(list(range(len(NEH_list))), NEH_list)
 
+	def do_the_Johnson(self):
+		return self.johnson(self.list_of_tasks, self.numb_machines)
 
 if __name__ == "__main__":
 	foo = Agregator("test.txt")
