@@ -1,6 +1,7 @@
 from Task import Task
 import re
 
+
 class Agregator():
 	def __init__(self, filename):
 		self.list_of_tasks = []
@@ -68,30 +69,28 @@ class Agregator():
 		return min_cmax, best_order
 
 	def __NEH_best_order(self, current_list, new_task):
-		best_Cmax=self.__getCMax(list(range(len(current_list))), current_list)
-		best_task_list=[]
-		for place in range(len(current_list)+1):
+		task_list = []
+		for place in range(len(current_list) + 1):
 			updated_list = current_list[:]
 			updated_list.insert(place, new_task)
-			new_list_Cmax = self.__getCMax(list(range(len(updated_list))), updated_list)
-			if new_list_Cmax < best_Cmax:
-				best_Cmax = new_list_Cmax
-				best_task_list = updated_list
-		return best_task_list
+			task_list.append(updated_list)
+		cemax = lambda lista: self.__getCMax(list(range(len(lista))), lista)
+		task_list.sort(reverse=True, key=cemax)
+		return task_list[0]
 
 	def NEH(self):
-		#decreasingly sort
+		# decreasingly sort
 		priorities = lambda task: task.priority
 		tasks_to_sort = self.list_of_tasks[:]
 		tasks_to_sort.sort(reverse=True, key=priorities)
 		biggest_Task = tasks_to_sort[0]
-		NEH_list=[biggest_Task, ]
+		NEH_list = [biggest_Task, ]
 		for task in tasks_to_sort[1:]:
-			NEH_list=self.__NEH_best_order(NEH_list, task)
-		return NEH_list
+			NEH_list = self.__NEH_best_order(NEH_list, task)
+		return self.__getCMax(list(range(len(NEH_list))), NEH_list)
 
 
 if __name__ == "__main__":
 	foo = Agregator("test.txt")
-	#print(foo.permute_for_best_order())
+	print(foo.permute_for_best_order())
 	print(foo.NEH())
