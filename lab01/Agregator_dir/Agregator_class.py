@@ -1,6 +1,6 @@
 from Task import Task
 import re
-
+import time
 
 class Agregator():
 	def __init__(self, filename):
@@ -116,12 +116,24 @@ class Agregator():
 		NEH_list = [biggest_Task, ]
 		for task in tasks_to_sort[1:]:
 			NEH_list = self.__NEH_best_order(NEH_list, task)
-		return self.__getCMax(list(range(len(NEH_list))), NEH_list)
+		return self.__getCMax(list(range(len(NEH_list))), NEH_list), self.__get_task_order(NEH_list)
 
 	def do_the_Johnson(self):
 		return self.johnson(self.list_of_tasks, self.numb_machines)
 
 if __name__ == "__main__":
-	foo = Agregator("test.txt")
-	print(foo.permute_for_best_order())
-	print(foo.NEH())
+	file = "ta002.txt"
+
+	foo = Agregator(file)
+	goo = Agregator(file)
+
+	permute_start = time.time()
+	print(foo.do_the_Johnson())
+	permute_end = time.time()
+	print(permute_end - permute_start)
+	print("_________________________________")
+	print("NEH: ")
+	NEH_start = time.time()
+	print(goo.NEH())
+	NEH_end = time.time()
+	print(NEH_end - NEH_start)
