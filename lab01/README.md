@@ -11,6 +11,18 @@ NEH:
 TIME : 751.6154239177704
 
 Wyniki natomiast pokrywały się jedynie tablica kolejności przybrała inną forme tylko ze względu na indexowanie ktore w w naszym programie jest od 0 a w podanych wynikach od 1..
+Dla 2 maszyn i 10 zadań:
+JOHNSON
+[4, 3, 9, 7, 6, 5, 2, 1, 8, 0]
+0.00007987022399902344
+_________________________________
+NEH: 
+(47, [8, 4, 2, 5, 3, 9, 7, 6, 1, 0])
+0.0007898807525634766
+_________________________________
+Permute: 
+(47, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+30.77678680419922
 Wnioski:
 Oczywistym jest także że algorytm NEH działał zdecydowanie szybciej ze względu na dużo mniejszą liczbę porównań ponieważ ilość przy permutowaniu 
 wynosić będzie ilość maszyn silnia
