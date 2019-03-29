@@ -23,6 +23,7 @@ _________________________________
 Permute: 
 (47, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 30.77678680419922
+
 Wnioski:
 Oczywistym jest także że algorytm NEH działał zdecydowanie szybciej ze względu na dużo mniejszą liczbę porównań ponieważ ilość przy permutowaniu 
 wynosić będzie ilość maszyn silnia
