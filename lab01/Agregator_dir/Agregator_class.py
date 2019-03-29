@@ -61,6 +61,7 @@ class Agregator():
 	def johnson(self, list_of_tasks, numb_machines):
 		first_half = []
 		second_half = []
+		copy=list_of_tasks[:]
 		if numb_machines == 2:
 			list_not_empty = True
 			while list_not_empty:
@@ -85,7 +86,8 @@ class Agregator():
 					list_not_empty = False
 
 		final_list = first_half + second_half
-		return final_list
+		cmax = self.__getCMax(final_list, copy)
+		return cmax, final_list
 
 	def permute_for_best_order(self):
 		min_cmax = self.__getCMax(self.list_of_index, self.list_of_tasks)
@@ -123,19 +125,30 @@ class Agregator():
 		return self.johnson(self.list_of_tasks, self.numb_machines)
 
 if __name__ == "__main__":
-	file = "ta001.txt"
+	file = "test.txt"
 
 	foo = Agregator(file)
 	goo = Agregator(file)
+	hoo = Agregator(file)
 
-#	permute_start = time.time()
-#	print(foo.permute_for_best_order())
-#	permute_end = time.time()
-#	print(permute_end - permute_start)
+	print("_________________________________")
+	print("JHOHNSON")
+	johnson_start = time.time()
+	print(foo.do_the_Johnson())
+	johnos_end = time.time()
+	print(johnos_end - johnson_start)
 	print("_________________________________")
 	print("NEH: ")
 	NEH_start = time.time()
 	print(goo.NEH())
 	NEH_end = time.time()
 	print(NEH_end - NEH_start)
+	print("_________________________________")
+	print("Permute: ")
+	permute_start = time.time()
+	print(goo.permute_for_best_order())
+	permute_end = time.time()
+	print(permute_end - permute_start)
+
+
 
