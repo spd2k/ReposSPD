@@ -14,7 +14,7 @@ Wyniki natomiast pokrywały się jedynie tablica kolejności przybrała inną fo
 Dla 2 maszyn i 10 zadań:
 JOHNSON
 [4, 3, 9, 7, 6, 5, 2, 1, 8, 0]
-0.00007987022399902344
+0.00009441375732421875
 _________________________________
 NEH: 
 (47, [8, 4, 2, 5, 3, 9, 7, 6, 1, 0])
