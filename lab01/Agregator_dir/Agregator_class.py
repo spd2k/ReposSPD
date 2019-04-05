@@ -1,3 +1,9 @@
+from __future__ import print_function
+from math import  exp
+import random
+from os import listdir
+import os
+path = '.'
 from Task import Task
 import re
 import time
@@ -87,7 +93,8 @@ class Agregator():
 
 		final_list = first_half + second_half
 		cmax = self.__getCMax(final_list, copy)
-		return cmax, final_list
+		return cmax
+
 
 	def permute_for_best_order(self):
 		min_cmax = self.__getCMax(self.list_of_index, self.list_of_tasks)
@@ -98,7 +105,7 @@ class Agregator():
 			if permuted_tasks_Cmax < min_cmax:
 				min_cmax = permuted_tasks_Cmax
 				best_order = permuted_order_of_tasks
-		return min_cmax, best_order
+		return min_cmax
 
 	def __NEH_best_order(self, current_list, new_task):
 		task_list = []
@@ -110,7 +117,7 @@ class Agregator():
 		task_list.sort(key=cemax)
 		return task_list[0]
 
-	def NEH(self):
+	def NEH(self,order=False):
 		# decreasingly sort
 		priorities = lambda task: task.priority
 		tasks_to_sort = self.list_of_tasks[:]
@@ -119,36 +126,76 @@ class Agregator():
 		NEH_list = [biggest_Task, ]
 		for task in tasks_to_sort[1:]:
 			NEH_list = self.__NEH_best_order(NEH_list, task)
-		return self.__getCMax(list(range(len(NEH_list))), NEH_list), self.__get_task_order(NEH_list)
+		if order:
+			return self.__getCMax(list(range(len(NEH_list))), NEH_list), self.__get_task_order(NEH_list)
+		else:
+			return NEH_list
 
 	def do_the_Johnson(self):
 		return self.johnson(self.list_of_tasks, self.numb_machines)
 
+	def __get_propability(self,pi, pi_prim, T):
+		return exp((self.__getCMax(list(range(len(pi))), pi ) - (self.__getCMax(list(range(len(pi_prim))), pi_prim))) / T)
+
+	def __get_random_tasks(self):
+		first_random_task = random.randint(0, self.numb_tasks-1)
+		second_random_task = random.randint(0, self.numb_tasks-1)
+		while first_random_task == second_random_task:
+			second_random_task = random.randint(0, self.numb_tasks-1)
+		return first_random_task, second_random_task
+
+	def SA(self, start_point,  Temperature, order = False, mode = 'insert'):
+		q=0.99
+		pi = start_point[:]
+		while Temperature >100 :
+			pi_prim = pi
+			if mode == 'insert':
+				random_item = random.randint(0, self.numb_tasks-1)
+				elem = pi_prim[random_item]
+				del pi_prim[random_item]
+				random_item = random.randint(0, self.numb_tasks-1)
+				pi_prim.insert(random_item, elem)
+			elif mode == 'swap':
+				first_random_task, second_random_task = self.__get_random_tasks()
+				pi_prim[first_random_task], pi_prim[second_random_task] = pi_prim[second_random_task], pi_prim[first_random_task]
+			if self.__get_propability(pi, pi_prim, Temperature) == 1:
+				pi=pi_prim
+			Temperature -= (q*Temperature)
+		if order:
+			print(Temperature)
+			return self.__getCMax(list(range(len(pi))), pi), self.__get_task_order(pi)
+		else:
+			print(Temperature)
+			return pi
+
+def compare_Johnson_to_NEH():
+
+	files = os.listdir(path)
+	print(files)
+	print("Johnson: ")
+	files = ['1.txt', '10.txt', '11.txt', '12.txt', '13.txt', '14.txt', '15.txt', '16.txt', '17.txt', '18.txt', '19.txt', '2.txt', '3.txt', '4.txt', '5.txt', '6.txt', '7.txt', '8.txt', '9.txt']
+
+	for plik in files[6:]:
+		foo = Agregator(plik)
+		print(str(foo.do_the_Johnson())+ "|", end="")
+	print("")
+	print("-------------------------------------------")
+
+	print("NEH:")
+	for plik in files[6:]:
+		goo = Agregator(plik)
+		print(str(goo.NEH()) + "|" , end="")
+	print("")
+	print("-------------------------------------------")
+
 if __name__ == "__main__":
-	file = "test.txt"
-
-	foo = Agregator(file)
-	goo = Agregator(file)
-	hoo = Agregator(file)
-
-	print("_________________________________")
-	print("JHOHNSON")
-	johnson_start = time.time()
-	print(foo.do_the_Johnson())
-	johnos_end = time.time()
-	print(johnos_end - johnson_start)
-	print("_________________________________")
-	print("NEH: ")
-	NEH_start = time.time()
-	print(goo.NEH())
-	NEH_end = time.time()
-	print(NEH_end - NEH_start)
-	print("_________________________________")
-	print("Permute: ")
-	permute_start = time.time()
-	print(goo.permute_for_best_order())
-	permute_end = time.time()
-	print(permute_end - permute_start)
-
-
-
+	filename = "5.txt"
+	foo = Agregator(filename)
+	goo = Agregator(filename)
+	hoo = Agregator(filename)
+	Temperature = 50000
+	print("NEH")
+	print(goo.NEH(order=True))
+	print("SA")
+	start_point = hoo.NEH()
+	print(foo.SA(start_point,Temperature, order=True))
