@@ -28,3 +28,11 @@ Wnioski:
 Oczywistym jest także że algorytm NEH działał zdecydowanie szybciej ze względu na dużo mniejszą liczbę porównań ponieważ ilość przy permutowaniu 
 wynosić będzie ilość maszyn silnia
 Natomiast przy NEHu możliwych opcji jest: [1+2+...n] Więc ilość nie rośnie jak funkcja silni jednak proporcjonalnie. Ilość operacji jest znacznie znacznie mniejsza, 
+
+
+
+
+task_to_sort[a,b,c,d]
+
+for task in task_to_sort[1:]:
+    print(task)
