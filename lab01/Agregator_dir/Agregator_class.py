@@ -127,7 +127,7 @@ class Agregator():
 		for task in tasks_to_sort[1:]:
 			NEH_list = self.__NEH_best_order(NEH_list, task)
 		if order:
-			return self.__getCMax(list(range(len(NEH_list))), NEH_list), self.__get_task_order(NEH_list)
+			return self.__getCMax(list(range(len(NEH_list))), NEH_list)#, self.__get_task_order(NEH_list)
 		else:
 			return NEH_list
 
@@ -135,8 +135,8 @@ class Agregator():
 		return self.johnson(self.list_of_tasks, self.numb_machines)
 
 	def __get_propability(self,pi, pi_prim, T):
-		cprim = self.__getCMax(list(range(len(pi))), pi_prim)
-		c = self.__getCMax(list(range(len(pi))), pi)
+		cprim = self.__getCMax(self.__fill_list_of_index(pi_prim), pi_prim)
+		c = self.__getCMax(self.__fill_list_of_index(pi), pi)
 		if cprim<c:
 			return 1
 		else:
@@ -150,9 +150,9 @@ class Agregator():
 		return first_random_task, second_random_task
 
 	def SA(self, start_point,  Temperature, order = False, mode = 'insert'):
-		q=0.99
+		q=0.8
 		pi = start_point[:]
-		while Temperature > 100:
+		while Temperature > 1000:
 			pi_prim = pi
 			if mode == 'insert':
 				random_item = random.randint(0, self.numb_tasks-1)
@@ -167,11 +167,48 @@ class Agregator():
 				pi=pi_prim
 			Temperature = (q*Temperature)
 		if order:
-			print(Temperature)
-			return self.__getCMax(list(range(len(pi))), pi), self.__get_task_order(pi)
+			#return self.__getCMax(list(range(len(pi))), pi)#, self.__get_task_order(pi)
+			return self.__getCMax(self.__fill_list_of_index(pi), pi)  # , self.__get_task_order(pi)
 		else:
 			print(Temperature)
 			return pi
+
+	def Schrage(self):
+		Cmax=0
+		G=[]
+		pi=[]
+		rj = lambda task: task.time[0]
+		N = self.list_of_tasks[:]
+		N.sort(reverse=False, key=rj)
+		t=N[0].time[0]
+		while(G or N):
+			while(N and N[0].time[0]<=t):
+				e=N[0]
+				G.append(e)
+				del N[0]
+			if (not G):
+				t=N[0].time[0]
+			else:
+				qj = lambda task: task.time[2]
+				G.sort(reverse=True, key=qj)
+				e=G[0]
+				del G[0]
+				pi.append(e)
+				t=t+e.time[1]
+				Cmax=max(Cmax, t+e.time[2])
+		return Cmax
+
+
+
+
+
+
+
+
+
+
+
+
 
 def compare_Johnson_to_NEH():
 
@@ -192,15 +229,41 @@ def compare_Johnson_to_NEH():
 		print(str(goo.NEH()) + "|" , end="")
 	print("")
 	print("-------------------------------------------")
+def compare_SA_to_NEH():
+
+	files = os.listdir(path)
+	temp=25000
+	print(files)
+	print("SA: ")
+	files = ['1.txt', '10.txt', '11.txt', '12.txt', '13.txt', '14.txt', '15.txt', '16.txt', '17.txt', '18.txt', '19.txt', '2.txt', '3.txt', '4.txt', '5.txt', '6.txt', '7.txt', '8.txt', '9.txt']
+	SA_start=time.time()
+	for plik in files[6:]:
+		foo = Agregator(plik)
+		print(str(foo.SA(foo.list_of_tasks,temp,order=True))+ "|", end="")
+	print("")
+	print("-------------------------------------------")
+	SA_stop=time.time()
+	print(SA_stop-SA_start)
+	NEH_start=time.time()
+	print("NEH:")
+	for plik in files[6:]:
+		goo = Agregator(plik)
+		print(str(goo.NEH(order=True)) + "|" , end="")
+	print("")
+	print("-------------------------------------------")
+	NEH_stop=time.time()
+	print(NEH_stop-NEH_start)
+
+
 
 if __name__ == "__main__":
-	filename = "5.txt"
+	filename = "in50.txt"
 	foo = Agregator(filename)
+	print(foo.Schrage())
+	filename = "in100.txt"
 	goo = Agregator(filename)
+	print(goo.Schrage())
+	filename = "in200.txt"
 	hoo = Agregator(filename)
-	Temperature = 50000
-	print("NEH")
-	print(goo.NEH(order=True))
-	print("SA")
-	start_point = hoo.NEH()
-	print(foo.SA(start_point,Temperature, order=True))
+	print(hoo.Schrage())
+
