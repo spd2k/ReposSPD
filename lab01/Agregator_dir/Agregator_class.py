@@ -196,7 +196,46 @@ class Agregator():
 				pi.append(e)
 				t=t+e.time[1]
 				Cmax=max(Cmax, t+e.time[2])
+		return Cmax#,pi
+
+	def SchragePmtn(self):
+		Cmax = 0
+		G = []
+		N=self.list_of_tasks[:]
+		rj = lambda task: task.time[0]
+		N.sort(reverse=False, key=rj)
+		t=0
+		l=Task(0, [0,0,0])
+		while (G or N):
+			while(N and N[0].time[0]<=t):
+				e = N[0]
+				G.append(e)
+				del N[0]
+				if (e.time[2] > l.time[2]):
+					l.time[1] = t - e.time[0]
+					t = e.time[0]
+					if l.time[1] > 0:
+						G.append(l)
+			if not G:
+				t=N[0].time[0]
+			else:
+				qj = lambda task: task.time[2]
+				G.sort(reverse=True, key=qj)
+				e = G[0]
+				del G[0]
+				l=e
+				t=t+e.time[1]
+				Cmax=max(Cmax, t+e.time[2])
 		return Cmax
+
+
+
+
+
+
+
+
+
 
 
 
@@ -257,6 +296,7 @@ def compare_SA_to_NEH():
 
 
 if __name__ == "__main__":
+	print("Schrage")
 	filename = "in50.txt"
 	foo = Agregator(filename)
 	print(foo.Schrage())
@@ -266,4 +306,15 @@ if __name__ == "__main__":
 	filename = "in200.txt"
 	hoo = Agregator(filename)
 	print(hoo.Schrage())
+	print("SchragePMTN")
+	filename = "in50.txt"
+	foo = Agregator(filename)
+	print(foo.SchragePmtn())
+	filename = "in100.txt"
+	goo = Agregator(filename)
+	print(goo.SchragePmtn())
+	filename = "in200.txt"
+	hoo = Agregator(filename)
+	print(hoo.SchragePmtn())
+
 
