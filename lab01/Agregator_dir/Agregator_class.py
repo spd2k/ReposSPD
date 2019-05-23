@@ -173,12 +173,12 @@ class Agregator():
 			print(Temperature)
 			return pi
 
-	def Schrage(self):
+	def Schrage(self, list_tasks):
 		Cmax=0
 		G=[]
 		pi=[]
 		rj = lambda task: task.time[0]
-		N = self.list_of_tasks[:]
+		N = list_tasks[:]
 		N.sort(reverse=False, key=rj)
 		t=N[0].time[0]
 		while(G or N):
@@ -196,16 +196,16 @@ class Agregator():
 				pi.append(e)
 				t=t+e.time[1]
 				Cmax=max(Cmax, t+e.time[2])
-		return Cmax#,pi
+		return Cmax, pi
 
-	def SchragePmtn(self):
+	def SchragePmtn(self, list_tasks):
 		Cmax = 0
 		G = []
-		N=self.list_of_tasks[:]
+		N=list_tasks[:]
 		rj = lambda task: task.time[0]
 		N.sort(reverse=False, key=rj)
 		t=0
-		l=Task(0, [0,0,0])
+		l=Task(0, [0,0,99999])
 		while (G or N):
 			while(N and N[0].time[0]<=t):
 				e = N[0]
@@ -299,22 +299,22 @@ if __name__ == "__main__":
 	print("Schrage")
 	filename = "in50.txt"
 	foo = Agregator(filename)
-	print(foo.Schrage())
+	print(foo.Schrage(foo.list_of_tasks))
 	filename = "in100.txt"
 	goo = Agregator(filename)
-	print(goo.Schrage())
+	print(goo.Schrage(goo.list_of_tasks))
 	filename = "in200.txt"
 	hoo = Agregator(filename)
-	print(hoo.Schrage())
+	print(hoo.Schrage(hoo.list_of_tasks))
 	print("SchragePMTN")
 	filename = "in50.txt"
 	foo = Agregator(filename)
-	print(foo.SchragePmtn())
+	print(foo.SchragePmtn(foo.list_of_tasks))
 	filename = "in100.txt"
 	goo = Agregator(filename)
-	print(goo.SchragePmtn())
+	print(goo.SchragePmtn(goo.list_of_tasks))
 	filename = "in200.txt"
 	hoo = Agregator(filename)
-	print(hoo.SchragePmtn())
+	print(hoo.SchragePmtn(hoo.list_of_tasks))
 
 
