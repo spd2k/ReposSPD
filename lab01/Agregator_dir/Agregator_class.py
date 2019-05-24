@@ -287,12 +287,12 @@ class Agregator():
 			pi_ = pi
 		b_idx = self.__last_task_on_critic_track(pi_, U)
 		a_idx = self.__first_task_on_critic_track(pi_[0:b_idx+1], b_idx, U)
-		c = self.critic_task(pi_[a_idx:b_idx])
+		c = self.critic_task(pi_[a_idx:b_idx+1])
 
 		if c == None:
 			return None # return from requrency
 
-		K = pi_[a_idx+1:b_idx]
+		K = pi_[a_idx+1:b_idx+1]
 
 		p_K = self.__count_time(K, "p")
 		r_K = min([i.time[0] for i in K])
@@ -316,7 +316,7 @@ class Agregator():
 		if LB < UB :
 			self.Carlier(LB, K)
 		c.time[2] = Q_time_backup
-		return None # exit from requrency 
+		return None # exit from requrency
 
 def compare_Johnson_to_NEH():
 
@@ -396,4 +396,8 @@ def check_Carlier():
 
 
 if __name__ == "__main__":
-	check_Carlier()
+	foo = Agregator("test_calrier")
+	foo.Carlier(900000000000, foo.list_of_tasks)
+	for i in foo.list_of_tasks:
+		print(i.nr)
+#	check_Carlier()
