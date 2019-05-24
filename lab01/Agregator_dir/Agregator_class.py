@@ -1,4 +1,4 @@
-from __future__ import print_function
+﻿from __future__ import print_function
 from math import  exp
 import random
 from os import listdir
@@ -196,7 +196,7 @@ class Agregator():
 				pi.append(e)
 				t=t+e.time[1]
 				Cmax=max(Cmax, t+e.time[2])
-		return Cmax#,pi
+		return Cmax, pi
 
 	def SchragePmtn(self):
 		Cmax = 0
@@ -228,23 +228,97 @@ class Agregator():
 				Cmax=max(Cmax, t+e.time[2])
 		return Cmax
 
+	def __last_task_on_critic_track(self, pi_, C_max):
+		offset =0
+		for i in range(len(pi_)-1, 0, -1):
+			inner_time=0
+			q_time = pi_[i].time[2]
+			for j in range(len(pi_)-1-offset, -1, -1):
+				tmp=pi_[j].time[1]
+				inner_time+=tmp
+				r_time = pi_[j].time[0]
+				computed_time = q_time + inner_time + r_time
+				if computed_time == C_max:
+					return i
+			offset +=1
+		else: return None
+
+	def __first_task_on_critic_track(self, pi_, b_idx, Cmax):
+		inner_time = 0
+		q_time = pi_[b_idx].time[2]
+		for i in range(b_idx, -1, -1):
+			tmp=pi_[i].time[1]
+			inner_time+=tmp
+			r_time = pi_[i].time[0]
+			computed_time = q_time + inner_time + r_time
+			if computed_time == Cmax:
+				return i
+		else: return None
+
+	def critic_task(self, critic_list):
+		min_task = critic_list[-1].time[2] # last task by default
+		for task in range(len(critic_list), -1, -1):
+			if critic_list[task].time[2] < min_task:
+				min_task = critic_list[task].time[2]
+				return min_task
+		else: return None
+
+
+	def __count_time(self, tasks, sign):
+		time = 2
+		if sign == "r":
+			time = 0
+		elif sign == "p":
+			time = 1
+		else :
+			time = 2
+		counted_time = 0
+		for job in tasks:
+			counted_time += job.time[time]
+		return counted_time
 
 
 
 
+	def Carlier(self, up_bound):
+		U,pi = self.Schrage()
+		pi_ = []
+		UB = up_bound
+		if U < UB :
+			UB = U
+			pi_ = pi
+		print(pi)
+		b_idx = self.__last_task_on_critic_track(pi_, U)
+		a_idx = self.__first_task_on_critic_track(pi_[0:b_idx+1], b_idx, U)
+		print(a_idx)
+		c = self.critic_task(pi_[a_idx:b_idx]) #przekazywac referencje czy kopie
 
+		if c == None:
+			return None #chuj wie co dalej
 
+		K = pi_[a_idx+1:b_idx]
 
+		p_K = self.__count_time(K, "r")
+		r_K = min([i.time[0] for i in K])
+		q_K = min([i.time[2] for i in K])
+		copy_of_c_r_time = c.time[0]
+		c.time[0] = max([c.time[0], r_K + p_K])
+		h_K = self.__count_time(K, "r") + self.__count_time(K, "p") + self.__count_time(K, "q")
+		h_K_C = h_K + c.time[0] + c.time[1] + c.time[2]
+		LB = max([h_K, h_K_C, self.SchragePmtn()])# shraga przerobić na argumenty/ zwraca cmax teraz
+		if LB < UB :
+			self.Carlier(UB) # przekazywac liste i UB
+		c.time[0] = copy_of_c_r_time # back to the original pi_
 
-
-
-
-
-
-
-
-
-
+		copy_of_c_q_time = c.time[2]
+		c.time[2] = max(c.time[2], self.__count_time(K, "q") + self.__count_time(K, "p"))
+		LB = self.SchragePmtn() # for this K with changed q for C task
+		h_K = self.__count_time(K, "r") + self.__count_time(K, "p") + self.__count_time(K, "q")
+		LB = max([h_K, h_K+c.time[0]|+c.time[1]+c.time[2], LB])
+		if LB < UB :
+			self.Carlier()
+		c.time[2]=copy_of_c_q_time
+		return
 
 
 
@@ -268,6 +342,7 @@ def compare_Johnson_to_NEH():
 		print(str(goo.NEH()) + "|" , end="")
 	print("")
 	print("-------------------------------------------")
+
 def compare_SA_to_NEH():
 
 	files = os.listdir(path)
@@ -293,9 +368,7 @@ def compare_SA_to_NEH():
 	NEH_stop=time.time()
 	print(NEH_stop-NEH_start)
 
-
-
-if __name__ == "__main__":
+def check_schrage():
 	print("Schrage")
 	filename = "in50.txt"
 	foo = Agregator(filename)
@@ -317,4 +390,7 @@ if __name__ == "__main__":
 	hoo = Agregator(filename)
 	print(hoo.SchragePmtn())
 
-
+if __name__ == "__main__":
+	filename = "test_calrier"
+	foo = Agregator(filename)
+	foo.Carlier(909090909090)
