@@ -294,7 +294,7 @@ class Agregator():
 
 		K = pi_[a_idx+1:b_idx]
 
-		p_K = self.__count_time(K, "r")
+		p_K = self.__count_time(K, "p")
 		r_K = min([i.time[0] for i in K])
 		q_K = min([i.time[2] for i in K])
 		R_time_backup = c.time[0]
@@ -304,9 +304,9 @@ class Agregator():
 		h_K_C = h_K + c.time[0] + c.time[1] + c.time[2]
 		LB = max([h_K, h_K_C, self.SchragePmtn(K)])
 		if LB < UB :
-			self.Carlier(LB, K) # przekazywac liste i UB
-		c.time[0] = R_time_backup # back to the original pi_
+			self.Carlier(LB, K) #
 
+		c.time[0] = R_time_backup # back to the original pi_
 		Q_time_backup = c.time[2] #backup for qtime
 
 		c.time[2] = max(c.time[2], q_K + p_K)
