@@ -95,7 +95,6 @@ class Agregator():
 		cmax = self.__getCMax(final_list, copy)
 		return cmax
 
-
 	def permute_for_best_order(self):
 		min_cmax = self.__getCMax(self.list_of_index, self.list_of_tasks)
 		best_order = []
@@ -256,12 +255,14 @@ class Agregator():
 		else: return None
 
 	def critic_task(self, critic_list):
-		min_task = critic_list[-1].time[2] # last task by default
-		for task in range(len(critic_list), -1, -1):
-			if critic_list[task].time[2] < min_task:
-				min_task = critic_list[task].time[2]
-				return min_task
-		else: return None
+		min_task = critic_list[-1] # last q time task by default
+		for task in range(len(critic_list)-1, -1, -1): # itering from last to first
+			if critic_list[task].time[2] < min_task.time[2]: # check q times for each
+				min_task = critic_list[task] # if any less
+		if critic_list[-1] == min_task:
+			return None
+		else:
+			return min_task
 
 
 	def __count_time(self, tasks, sign):
@@ -277,21 +278,17 @@ class Agregator():
 			counted_time += job.time[time]
 		return counted_time
 
-
-
-
-	def Carlier(self, up_bound):
-		U,pi = self.Schrage()
+	def Carlier(self, up_bound,list_of_tasks):
+		U,pi = self.Schrage(list_of_tasks[:])
 		pi_ = []
 		UB = up_bound
 		if U < UB :
 			UB = U
 			pi_ = pi
-		print(pi)
 		b_idx = self.__last_task_on_critic_track(pi_, U)
 		a_idx = self.__first_task_on_critic_track(pi_[0:b_idx+1], b_idx, U)
 		print(a_idx)
-		c = self.critic_task(pi_[a_idx:b_idx]) #przekazywac referencje czy kopie
+		c = self.critic_task(pi_[a_idx:b_idx])
 
 		if c == None:
 			return None #chuj wie co dalej
@@ -301,27 +298,26 @@ class Agregator():
 		p_K = self.__count_time(K, "r")
 		r_K = min([i.time[0] for i in K])
 		q_K = min([i.time[2] for i in K])
-		copy_of_c_r_time = c.time[0]
+		R_time_backup = c.time[0]
+
 		c.time[0] = max([c.time[0], r_K + p_K])
 		h_K = self.__count_time(K, "r") + self.__count_time(K, "p") + self.__count_time(K, "q")
 		h_K_C = h_K + c.time[0] + c.time[1] + c.time[2]
-		LB = max([h_K, h_K_C, self.SchragePmtn()])# shraga przerobić na argumenty/ zwraca cmax teraz
+		LB = max([h_K, h_K_C, self.SchragePmtn(K)])
 		if LB < UB :
-			self.Carlier(UB) # przekazywac liste i UB
-		c.time[0] = copy_of_c_r_time # back to the original pi_
+			self.Carlier(LB, K) # przekazywac liste i UB
+		c.time[0] = R_time_backup # back to the original pi_
 
-		copy_of_c_q_time = c.time[2]
-		c.time[2] = max(c.time[2], self.__count_time(K, "q") + self.__count_time(K, "p"))
-		LB = self.SchragePmtn() # for this K with changed q for C task
+		Q_time_backup = c.time[2] #backup for qtime
+
+		c.time[2] = max(c.time[2], q_K + p_K)
+		LB = self.SchragePmtn(K)
 		h_K = self.__count_time(K, "r") + self.__count_time(K, "p") + self.__count_time(K, "q")
 		LB = max([h_K, h_K+c.time[0]|+c.time[1]+c.time[2], LB])
 		if LB < UB :
-			self.Carlier()
-		c.time[2]=copy_of_c_q_time
+			self.Carlier(LB, K)
+		c.time[2] = Q_time_backup
 		return
-
-
-
 
 def compare_Johnson_to_NEH():
 
@@ -393,4 +389,6 @@ def check_schrage():
 if __name__ == "__main__":
 	filename = "test_calrier"
 	foo = Agregator(filename)
-	foo.Carlier(909090909090)
+	foo.Carlier(900000000000, foo.list_of_tasks)
+	for i in foo.list_of_tasks:
+		print(i.nr)
