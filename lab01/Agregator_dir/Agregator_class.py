@@ -300,9 +300,10 @@ class Agregator():
 		R_time_backup = c.time[0]
 
 		c.time[0] = max([c.time[0], r_K + p_K])
-		h_K = self.__count_time(K, "r") + self.__count_time(K, "p") + self.__count_time(K, "q")
+		h_K = r_K + self.__count_time(K, "p") + q_K
 		h_K_C = h_K + c.time[0] + c.time[1] + c.time[2]
-		LB = max([h_K, h_K_C, self.SchragePmtn(K)])
+		LB = self.SchragePmtn(K)
+		LB = max([h_K, h_K_C, LB])
 		if LB < UB :
 			self.Carlier(LB, K) #
 
@@ -311,8 +312,9 @@ class Agregator():
 
 		c.time[2] = max(c.time[2], q_K + p_K)
 		LB = self.SchragePmtn(K)
-		h_K = self.__count_time(K, "r") + self.__count_time(K, "p") + self.__count_time(K, "q")
-		LB = max([h_K, h_K+c.time[0]+c.time[1]+c.time[2], LB])
+		h_K = r_K + self.__count_time(K, "p") + q_K
+		h_K_C = h_K+c.time[0]+c.time[1]+c.time[2]
+		LB = max([h_K, h_K_C, LB])
 		if LB < UB :
 			self.Carlier(LB, K)
 		c.time[2] = Q_time_backup
