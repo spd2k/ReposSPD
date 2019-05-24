@@ -278,6 +278,18 @@ class Agregator():
 			counted_time += job.time[time]
 		return counted_time
 
+	def h(self, K, C=None):
+		K_prim = K[:]
+		if C is not None:
+			K_prim.append(C)
+		p_K_prim = self.__count_time(K_prim, "p")
+		r_K_prim = min([i.time[0] for i in K_prim])
+		q_K_prim = min([i.time[2] for i in K_prim])
+		h_K = p_K_prim + r_K_prim + q_K_prim
+		return h_K
+
+
+
 	def Carlier(self, up_bound,list_of_tasks):
 		U,pi = self.Schrage(list_of_tasks[:])
 		pi_ = []
@@ -293,15 +305,16 @@ class Agregator():
 			return None # return from requrency
 
 		K = pi_[a_idx+1:b_idx+1]
-
 		p_K = self.__count_time(K, "p")
 		r_K = min([i.time[0] for i in K])
 		q_K = min([i.time[2] for i in K])
 		R_time_backup = c.time[0]
 
 		c.time[0] = max([c.time[0], r_K + p_K])
-		h_K = r_K + self.__count_time(K, "p") + q_K
-		h_K_C = h_K + c.time[0] + c.time[1] + c.time[2]
+
+		h_K = self.h(K)
+		h_K_C = self.h(K, c)
+
 		LB = self.SchragePmtn(K)
 		LB = max([h_K, h_K_C, LB])
 		if LB < UB :
@@ -312,8 +325,8 @@ class Agregator():
 
 		c.time[2] = max(c.time[2], q_K + p_K)
 		LB = self.SchragePmtn(K)
-		h_K = r_K + self.__count_time(K, "p") + q_K
-		h_K_C = h_K+c.time[0]+c.time[1]+c.time[2]
+		h_K = self.h(K)
+		h_K_C = self.h(K, c)
 		LB = max([h_K, h_K_C, LB])
 		if LB < UB :
 			self.Carlier(LB, K)
