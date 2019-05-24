@@ -290,7 +290,7 @@ class Agregator():
 		c = self.critic_task(pi_[a_idx:b_idx])
 
 		if c == None:
-			return None #chuj wie co dalej
+			return None # return from requrency
 
 		K = pi_[a_idx+1:b_idx]
 
@@ -316,7 +316,7 @@ class Agregator():
 		if LB < UB :
 			self.Carlier(LB, K)
 		c.time[2] = Q_time_backup
-		return
+		return None # exit from requrency 
 
 def compare_Johnson_to_NEH():
 
