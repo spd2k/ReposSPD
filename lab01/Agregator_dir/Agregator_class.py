@@ -287,7 +287,6 @@ class Agregator():
 			pi_ = pi
 		b_idx = self.__last_task_on_critic_track(pi_, U)
 		a_idx = self.__first_task_on_critic_track(pi_[0:b_idx+1], b_idx, U)
-		print(a_idx)
 		c = self.critic_task(pi_[a_idx:b_idx])
 
 		if c == None:
@@ -386,9 +385,15 @@ def check_schrage():
 	hoo = Agregator(filename)
 	print(hoo.SchragePmtn(hoo.list_of_tasks))
 
+
+def check_Carlier():
+	filenames = ["in50.txt", "in100.txt", "in200.txt"]
+	for file in filenames:
+		foo = Agregator(file)
+		foo.Carlier(900000000000, foo.list_of_tasks)
+		for i in foo.list_of_tasks:
+			print(i.nr)
+
+
 if __name__ == "__main__":
-	filename = "test_calrier"
-	foo = Agregator(filename)
-	foo.Carlier(900000000000, foo.list_of_tasks)
-	for i in foo.list_of_tasks:
-		print(i.nr)
+	check_Carlier()
