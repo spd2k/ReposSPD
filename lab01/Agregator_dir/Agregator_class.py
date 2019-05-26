@@ -285,13 +285,6 @@ class Agregator():
 		h_K = p_K_prim + r_K_prim + q_K_prim
 		return h_K
 
-	def __get_c_idx(self, C, pi):
-		count=0
-		for i in pi:
-			count+=1
-			if C==i:
-				return count
-
 
 	def Carlier(self, up_bound, list_of_tasks):
 		print("-----")
@@ -306,7 +299,7 @@ class Agregator():
 		c = self.critic_task(pi[a_idx:b_idx+1])
 		if c == None:
 			return pi_ # return from requrency
-		c_idx = self.__get_c_idx(c, pi)
+		c_idx = pi.index(c)
 		K = pi[c_idx+1:b_idx+1]
 		p_K = self.__count_time(K, "p")
 		r_K = min([i.time[0] for i in K])
