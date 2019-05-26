@@ -300,12 +300,12 @@ class Agregator():
 		UB = up_bound
 		if U < UB :
 			UB = U
-			pi_ = pi
+			pi_ = pi[:]
 		b_idx = self.__last_task_on_critic_track(pi, U)
 		a_idx = self.__first_task_on_critic_track(pi[0:b_idx+1], b_idx, U)
 		c = self.critic_task(pi[a_idx:b_idx+1])
 		if c == None:
-			return None # return from requrency
+			return pi_ # return from requrency
 		c_idx = self.__get_c_idx(c, pi)
 		K = pi[c_idx+1:b_idx+1]
 		p_K = self.__count_time(K, "p")
