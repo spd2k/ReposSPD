@@ -252,18 +252,15 @@ class Agregator():
 			computed_time = q_time + inner_time + r_time
 			if computed_time == Cmax:
 				return i
-		else: return None
+		else: return
 
 	def critic_task(self, critic_list):
 		min_task = critic_list[-1] # last q time task by default
 		for task in range(len(critic_list)-1, -1, -1): # itering from last to first
 			if critic_list[task].time[2] < min_task.time[2]: # check q times for each
 				min_task = critic_list[task] # if any less
-		if critic_list[-1] == min_task:
-			return None
-		else:
-			return min_task
-
+				return min_task
+		else: return None
 
 	def __count_time(self, tasks, sign):
 		time = 2
@@ -288,23 +285,29 @@ class Agregator():
 		h_K = p_K_prim + r_K_prim + q_K_prim
 		return h_K
 
+	def __get_c_idx(self, C, pi):
+		count=0
+		for i in pi:
+			count+=1
+			if C==i:
+				return count
 
 
-	def Carlier(self, up_bound,list_of_tasks):
-		U,pi = self.Schrage(list_of_tasks[:])
+	def Carlier(self, up_bound, list_of_tasks):
+		print("-----")
+		U, pi = self.Schrage(list_of_tasks[:])
 		pi_ = []
 		UB = up_bound
 		if U < UB :
 			UB = U
 			pi_ = pi
-		b_idx = self.__last_task_on_critic_track(pi_, U)
-		a_idx = self.__first_task_on_critic_track(pi_[0:b_idx+1], b_idx, U)
-		c = self.critic_task(pi_[a_idx:b_idx+1])
-
+		b_idx = self.__last_task_on_critic_track(pi, U)
+		a_idx = self.__first_task_on_critic_track(pi[0:b_idx+1], b_idx, U)
+		c = self.critic_task(pi[a_idx:b_idx+1])
 		if c == None:
 			return None # return from requrency
-
-		K = pi_[a_idx+1:b_idx+1]
+		c_idx = self.__get_c_idx(c, pi)
+		K = pi[c_idx+1:b_idx+1]
 		p_K = self.__count_time(K, "p")
 		r_K = min([i.time[0] for i in K])
 		q_K = min([i.time[2] for i in K])
@@ -315,21 +318,21 @@ class Agregator():
 		h_K = self.h(K)
 		h_K_C = self.h(K, c)
 
-		LB = self.SchragePmtn(K)
+		LB = self.SchragePmtn(pi)
 		LB = max([h_K, h_K_C, LB])
 		if LB < UB :
-			self.Carlier(LB, K) #
+			self.Carlier(LB, pi) #
 
-		c.time[0] = R_time_backup # back to the original pi_
+		c.time[0] = R_time_backup # back to the original pi
 		Q_time_backup = c.time[2] #backup for qtime
 
 		c.time[2] = max(c.time[2], q_K + p_K)
-		LB = self.SchragePmtn(K)
+		LB = self.SchragePmtn(pi)
 		h_K = self.h(K)
 		h_K_C = self.h(K, c)
 		LB = max([h_K, h_K_C, LB])
 		if LB < UB :
-			self.Carlier(LB, K)
+			self.Carlier(LB, pi)
 		c.time[2] = Q_time_backup
 		return None # exit from requrency
 
@@ -411,8 +414,9 @@ def check_Carlier():
 
 
 if __name__ == "__main__":
-	foo = Agregator("test_calrier")
-	foo.Carlier(900000000000, foo.list_of_tasks)
-	for i in foo.list_of_tasks:
+	foo = Agregator("in50.txt")
+	lista = foo.list_of_tasks
+	foo.Carlier(900000000000, lista)
+	for i in lista:
 		print(i.nr)
-#	check_Carlier()
+	#check_Carlier()
