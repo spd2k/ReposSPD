@@ -287,17 +287,19 @@ class Agregator():
 
 
 	def Carlier(self, up_bound, list_of_tasks):
-		print("-----")
 		U, pi = self.Schrage(list_of_tasks[:])
 		pi_ = []
 		UB = up_bound
 		if U < UB :
 			UB = U
 			pi_ = pi[:]
+		print("UP" +str(len(pi)))
 		b_idx = self.__last_task_on_critic_track(pi, U)
 		a_idx = self.__first_task_on_critic_track(pi[0:b_idx+1], b_idx, U)
 		c = self.critic_task(pi[a_idx:b_idx+1])
 		if c == None:
+			print("C" +str(len(pi)))
+
 			return pi_ # return from requrency
 		c_idx = pi.index(c)
 		K = pi[c_idx+1:b_idx+1]
@@ -305,7 +307,6 @@ class Agregator():
 		r_K = min([i.time[0] for i in K])
 		q_K = min([i.time[2] for i in K])
 		R_time_backup = c.time[0]
-
 		c.time[0] = max([c.time[0], r_K + p_K])
 
 		h_K = self.h(K)
@@ -314,7 +315,9 @@ class Agregator():
 		LB = self.SchragePmtn(pi)
 		LB = max([h_K, h_K_C, LB])
 		if LB < UB :
-			self.Carlier(LB, pi) #
+			print("R-->")
+			pi = self.Carlier(LB, pi[:]) #
+			print("<--R")
 
 		c.time[0] = R_time_backup # back to the original pi
 		Q_time_backup = c.time[2] #backup for qtime
@@ -325,9 +328,13 @@ class Agregator():
 		h_K_C = self.h(K, c)
 		LB = max([h_K, h_K_C, LB])
 		if LB < UB :
-			self.Carlier(LB, pi)
+			print("Q-->")
+			pi = self.Carlier(LB, pi[:])
+			print(len(pi))
+			print("<--Q")
 		c.time[2] = Q_time_backup
-		return None # exit from requrency
+		print("return"+ str(len(pi)))
+		return pi # exit from requrency
 
 def compare_Johnson_to_NEH():
 
@@ -396,7 +403,6 @@ def check_schrage():
 	hoo = Agregator(filename)
 	print(hoo.SchragePmtn(hoo.list_of_tasks))
 
-
 def check_Carlier():
 	filenames = ["in50.txt", "in100.txt", "in200.txt"]
 	for file in filenames:
@@ -404,7 +410,6 @@ def check_Carlier():
 		foo.Carlier(900000000000, foo.list_of_tasks)
 		for i in foo.list_of_tasks:
 			print(i.nr)
-
 
 if __name__ == "__main__":
 	foo = Agregator("in50.txt")
