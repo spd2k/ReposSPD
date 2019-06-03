@@ -316,7 +316,7 @@ class Agregator():
 		LB = max([h_K, h_K_C, LB])
 		if LB < UB :
 			print("R-->")
-			pi = self.Carlier(LB, pi[:]) #
+			pi = self.Carlier(UB, pi[:]) #
 			print("<--R")
 
 		c.time[0] = R_time_backup # back to the original pi
@@ -329,7 +329,7 @@ class Agregator():
 		LB = max([h_K, h_K_C, LB])
 		if LB < UB :
 			print("Q-->")
-			pi = self.Carlier(LB, pi[:])
+			pi = self.Carlier(UB, pi[:])
 			print(len(pi))
 			print("<--Q")
 		c.time[2] = Q_time_backup
@@ -414,7 +414,8 @@ def check_Carlier():
 if __name__ == "__main__":
 	foo = Agregator("in50.txt")
 	lista = foo.list_of_tasks
-	foo.Carlier(900000000000, lista)
-	for i in lista:
-		print(i.nr)
+	pi=foo.Carlier(900000000000, lista)
+	print(foo.Schrage(pi))
+	#for i in lista:
+	#	print(i.nr)
 	#check_Carlier()
