@@ -1,0 +1,25 @@
+﻿1. UB -  przkazac inf zeby wszedlk bo potem rekurencyjnie leci
+2. if   przypisuje cmax i kolejnosc(pi)
+3. zadanie b - ostatnie zadanie ktorego czas zakonczenia + czas dostarczenia = Cmax z pi
+4. zadanie a - pierwsze zadanie takie ze jego r plus suma po czas p od niego do B plus qb = Cmax
+5. zadanie c - ktore jest ostatnim zadaniem miedzy zadaniem a i b, takie ze jego q jest mniejsze q - zadania B
+6. jesli nie moze znalesc zadania c, to nie robie dalej (wychodze z rekurenchi)
+
+linjka 12:
+  K = zadania od c+ 1 (zadanie po c z kolejnosci z shrage) do zadania b
+parametry z bloku zadań K - R z bloku to zadanie z najmniejszym r i tak samo reszta
+
+p(K) - suma wszystkich zadań bloku po czasie p
+
+14. bierzemy zadanie c i jego jest zmienione na maximun z poprzedniej wartosci i r z bloku K i p z bloku K
+14 to nasz podproblem i na tym podproblemie odpalamy shreaga z przerwaniami
+16. to ustatwaimy jako LB
+
+h(K U {c}) umowiony wyzej wzór plus zadanie C
+
+16 wybieram najwieksza
+
+jak jest mniejsze to odpalam carriera na zmodyfikowanej
+
+20: otwarazam pierwotne r
+robie dalej to samo tylko na q
