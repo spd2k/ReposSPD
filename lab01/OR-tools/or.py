@@ -58,7 +58,7 @@ def Milp(jobs, instanceName):
 def GetRPQsFromFile(pathToFile):
 
     fullTextFromFile = Path(pathToFile).read.text()
-    words = fullTextFromFile.replace("\n"," ").split(" ")
+    words = fullTextFromFile.replace("\n", " ").split(" ")
     words_cleaned = list(filter(None, words))
     numbers = list(map(int, words_cleaned))
 
@@ -68,7 +68,7 @@ def GetRPQsFromFile(pathToFile):
 
     jobs=[]
     for i in range(numberOfJobs):
-        jobs.append(RPQ(numbers[0],numbers[1],numbers[2]))
+        jobs.append(RPQ(numbers[0], numbers[1], numbers[2]))
         numbers.pop(0)
         numbers.pop(0)
         numbers.pop(0)
