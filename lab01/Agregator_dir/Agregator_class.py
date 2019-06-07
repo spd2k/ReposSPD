@@ -8,8 +8,10 @@ from Task import Task
 import re
 import time
 
+
 class Agregator():
 	def __init__(self, filename):
+		self.global_UB = 0
 		self.list_of_tasks = []
 		self.numb_tasks = 0
 		self.numb_machines = 0
@@ -296,39 +298,40 @@ class Agregator():
 		b_idx = self.__last_task_on_critic_track(pi, U)
 		a_idx = self.__first_task_on_critic_track(pi[0:b_idx+1], b_idx, U)
 		c = self.critic_task(pi[a_idx:b_idx+1])
-		if c == None:
-			print("C" +str(len(pi)))
-			print(UB)
+		if c != None:
 
-			return pi # return from requrency
-		c_idx = pi.index(c)
-		K = pi[c_idx+1:b_idx+1]
-		p_K = self.__count_time(K, "p")
-		r_K = min([i.time[0] for i in K])
-		q_K = min([i.time[2] for i in K])
-		R_time_backup = c.time[0]
-		c.time[0] = max([c.time[0], r_K + p_K])
+			c_idx = pi.index(c)
+			K = pi[c_idx+1:b_idx+1]
+			p_K = self.__count_time(K, "p")
+			r_K = min([i.time[0] for i in K])
+			q_K = min([i.time[2] for i in K])
+			R_time_backup = c.time[0]
+			c.time[0] = max([c.time[0], r_K + p_K])
 
-		h_K = self.h(K)
-		h_K_C = self.h(K, c)
+			h_K = self.h(K)
+			h_K_C = self.h(K, c)
 
-		LB = self.SchragePmtn(pi)
-		LB = max([h_K, h_K_C, LB])
-		if LB < UB :
-			pi = self.Carlier(UB, pi[:])
+			LB = self.SchragePmtn(pi)
+			LB = max([h_K, h_K_C, LB])
+			if LB < UB :
+				pi = self.Carlier(UB, pi[:])
 
-		c.time[0] = R_time_backup # back to the original pi
-		Q_time_backup = c.time[2] #backup for qtime
+			c.time[0] = R_time_backup # back to the original pi
+			Q_time_backup = c.time[2] #backup for qtime
 
-		c.time[2] = max(c.time[2], q_K + p_K)
-		LB = self.SchragePmtn(pi)
-		h_K = self.h(K)
-		h_K_C = self.h(K, c)
-		LB = max([h_K, h_K_C, LB])
-		if LB < UB :
-			pi = self.Carlier(UB, pi[:])
-		c.time[2] = Q_time_backup
-		return pi # exit from requrency
+			c.time[2] = max(c.time[2], q_K + p_K)
+			LB = self.SchragePmtn(pi)
+			h_K = self.h(K)
+			h_K_C = self.h(K, c)
+			LB = max([h_K, h_K_C, LB])
+			if LB < UB :
+				pi = self.Carlier(UB, pi[:])
+			c.time[2] = Q_time_backup
+			return pi
+		else:
+			self.global_UB= UB
+			return pi
+
 
 def compare_Johnson_to_NEH():
 
@@ -398,13 +401,19 @@ def check_schrage():
 	print(hoo.SchragePmtn(hoo.list_of_tasks))
 
 def check_Carlier():
-	filenames = ["makuch0.txt","makuch1.txt","makuch2.txt","makuch3.txt","makuch4.txt","makuch5.txt","makuch6.txt","makuch7.txt","makuch8.txt",]#["in50.txt", "in100.txt", "in200.txt"]
+	filenames = ["data0.txt","data1.txt","data2.txt","data3.txt","data4.txt","data5.txt","data6.txt","data7.txt","data8.txt",]#["in50.txt", "in100.txt", "in200.txt"]
 	for file in filenames:
+		print("-------------------------------------------------")
 		foo = Agregator(file)
-		foo.Carlier(900000000000, foo.list_of_tasks)
+		result = foo.Carlier(900000000000, foo.list_of_tasks)
+		print(file)
+		# for i in result:
+		# 	print(i.nr, end =" ")
 
+		print('\n', foo.global_UB)
 
 if __name__ == "__main__":
-	foo = Agregator("makuch8.txt")
-	lista = foo.list_of_tasks
-	pi=foo.Carlier(900000000000, lista)
+	check_Carlier()
+	# foo = Agregator("makuch3.txt")
+	# lista = foo.list_of_tasks
+	# pi, u=foo.Carlier(900000000000, lista)
